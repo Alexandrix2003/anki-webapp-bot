@@ -11,7 +11,7 @@ templates = Jinja2Templates(directory="templates")
 # Инициализация клиента нового SDK (подхватывает GEMINI_API_KEY из окружения)
 client = genai.Client()
 
-# Создаем шаблон карточки Anki
+# Создаем шаблон карточки Anki с правильными ключами qfmt и afmt
 anki_model = genanki.Model(
     1607392319,
     "Telegram Vocab Model",
@@ -23,7 +23,8 @@ anki_model = genanki.Model(
     templates=[
         {
             "name": "Card 1",
-            "fmt": (
+            "qfmt": "<b>Слово:</b> {{Word}}",
+            "afmt": (
                 "<b>Слово:</b> {{Word}}<br><br><b>Перевод:</b>"
                 " {{Translation}}<br><br><b>Контекст:</b> {{Definition}}"
             ),
