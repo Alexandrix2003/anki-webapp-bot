@@ -34,7 +34,7 @@ anki_model = genanki.Model(
 
 @app.api_route("/", methods=["GET", "HEAD"], response_class=HTMLResponse)
 async def read_root(request: Request):
-  return templates.TemplateResponse("index.html", {"request": request})
+  return templates.TemplateResponse(request, "index.html", {"request": request})
 
 
 @app.post("/translate")
