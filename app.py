@@ -3,12 +3,12 @@ import genanki
 from fastapi import FastAPI, Form, Request
 from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.templating import Jinja2Templates
-from google import genai  # Новый официальный SDK
+from google import genai
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
-# Инициализация клиента нового SDK (автоматически подхватит GEMINI_API_KEY из переменных окружения)
+# Инициализация клиента нового SDK (подхватывает GEMINI_API_KEY из окружения)
 client = genai.Client()
 
 # Создаем шаблон карточки Anki
@@ -32,7 +32,7 @@ anki_model = genanki.Model(
 )
 
 
-@app.get("/", response_class=HTMLResponse)
+@app.api_route("/", methods=["GET", "HEAD"], response_class=HTMLResponse)
 async def read_root(request: Request):
   return templates.TemplateResponse("index.html", {"request": request})
 
@@ -46,9 +46,8 @@ async def translate_word(word: str = Form(...)):
   )
 
   try:
-    # Запрос через актуальный метод нового SDK
     response = client.models.generate_content(
-        model="gemini-2.5-flash",  # Или gemini-1.5-flash / gemini-2.0-flash
+        model="gemini-2.5-flash",
         contents=prompt,
     )
     ai_text = response.text
