@@ -1,1 +1,94 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anki Word Bot</title>
+    <!-- Официальный скрипт интеграции Telegram Web App -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            font-family: var(--tg-theme-font-family, sans-serif);
+            background-color: var(--tg-theme-bg-color, #ffffff);
+            color: var(--tg-theme-text-color, #000000);
+            padding: 20px;
+            margin: 0;
+        }
+        .container {
+            max-width: 400px;
+            margin: auto;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--tg-theme-button-color, #2481cc);
+            color: var(--tg-theme-button-text-color, #ffffff);
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #result {
+            margin-top: 20px;
+            white-space: pre-wrap;
+            background: var(--tg-theme-secondary-bg-color, #f1f1f1);
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .download-btn {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 15px;
+            background-color: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>📚 Словарь для Anki</h2>
+        <input type="text" id="wordInput" placeholder="Введите слово на английском...">
+        <button onclick="sendWord()">Перевести и создать карточку</button>
+        <div id="result"></div>
+    </div>
 
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand(); // Разворачиваем на весь экран
+
+        async function sendWord() {
+            let word = document.getElementById('wordInput').value;
+            if (!word) return;
+
+            let resultDiv = document.getElementById('result');
+            resultDiv.innerText = "ИИ думает и создает карточку...";
+
+            let formData = new URLSearchParams();
+            formData.append("word", word);
+
+            try {
+                let response = await fetch('/translate', {
+                    method: 'POST',
+                    body: formData
+                });
+                let data = await response.json();
+                
+                resultDiv.innerHTML = `<b>Результат:</b><br>${data.translation}<br><br><a href="${data.download_url}" class="download-btn" target="_blank">📥 Скачать карточку .apkg</a>`;
+            } catch (err) {
+                resultDiv.innerText = "Произошла ошибка при запросе.";
+            }
+        }
+    </script>
+</body>
+</html>
